@@ -182,6 +182,7 @@
 
   /* ============ 1. 每日英语 ============ */
   function renderEnglish(date) {
+    return; /* 每日英语模块已移除 */
     var list = WB.english || [];
     var e = pickEntry(list, date || TODAY);
     var box = $("#englishBody");
@@ -366,15 +367,20 @@
 
     box.innerHTML = '<div class="card card-pad"><div class="news-list">' +
       e.items.map(function (n) {
+        var excerpt = n.excerpt
+          ? '<div class="news-excerpt">“' + esc(n.excerpt) + '”</div>'
+          : "";
         return '<div class="news-item">' +
           '<div class="news-head"><span class="tag t-blue">' + esc(n.tag) + "</span>" +
           '<div class="news-title">' + esc(n.title) + "</div>" +
           '<span class="news-toggle"></span></div>' +
           '<div class="news-extra">' +
+          excerpt +
           '<div class="news-digest">' + esc(n.digest) + "</div>" +
           '<div class="news-angle">' + esc(n.angle) + "</div>" +
           '<div class="news-src">来源：' + esc(n.source) +
-            (n.url ? ' · <a href="' + esc(n.url) + '" target="_blank" rel="noopener">查看原文 ↗</a>' : "") +
+            ' · <a class="news-link" href="https://www.baidu.com/s?wd=' + enc(n.title) +
+            '" target="_blank" rel="noopener" title="按标题搜索，定位人民网等官媒原文">搜原文 ↗</a>' +
           "</div></div></div>";
       }).join("") + "</div></div>";
 
@@ -383,42 +389,47 @@
   }
 
   /* ============ 4. 财经资讯 ============ */
+  function mktCard(lbl, val, cls) {
+    if (val == null) return "";
+    return '<div class="mkt"><div class="mkt-lbl">' + esc(lbl) + '</div><div class="mkt-val ' + esc(cls) + '">' + esc(val) + "</div></div>";
+  }
+
   function renderFinance(date) {
     var list = WB.finance || [];
     var e = pickEntry(list, date || TODAY);
     var box = $("#financeBody");
-    if (!e) { box.innerHTML = '<div class="empty">暂无资讯</div>'; return; }
+    if (!e) { box.innerHTML = '<div class="empty">暂无数据</div>'; return; }
 
-    var lesson = '<div class="lesson"><h4>' + esc(e.lesson.title) + "</h4>" +
-      e.lesson.body.map(function (p) { return "<p>" + md(p) + "</p>"; }).join("") +
-      '<div style="margin-top:12px"><span class="tag t-amber">关键词 · ' + esc(e.lesson.keyword) + "</span></div></div>";
+    var m = e.market || {};
+    var mk = '<div class="mkt-cards">' +
+      mktCard("主力净流入", m.mainNet, m.mainNet && m.mainNet.indexOf("净流出") >= 0 ? "neg" : "pos") +
+      mktCard("北向资金", m.northbound, m.northbound && m.northbound.indexOf("净流出") >= 0 ? "neg" : "pos") +
+      mktCard("两市成交额", m.turnover, "") +
+      mktCard("市场情绪", m.sentiment, "") +
+      "</div>";
 
-    var rates = '<div class="card card-pad"><div class="sub-h">' + esc(e.rates.title) + "</div>" +
-      '<table class="rate-table"><thead><tr><th>存期</th><th style="text-align:right">挂牌年利率</th></tr></thead><tbody>' +
-      e.rates.rows.map(function (r) { return "<tr><td>" + esc(r.term) + "</td><td>" + esc(r.rate) + "</td></tr>"; }).join("") +
-      "</tbody></table>" +
-      '<div style="font-size:12px;color:var(--faint);margin-top:9px">' + esc(e.rates.note) + "</div></div>";
+    var secs = e.sectors || [];
+    var maxVol = 1;
+    secs.forEach(function (s) { var v = Math.abs(s.vol || 0); if (v > maxVol) maxVol = v; });
+    var sf = secs.length ? '<div class="card card-pad"><div class="sub-h">板块资金流向（按净流入排序）</div><div class="sector-flow">' +
+      secs.map(function (s) {
+        var w = Math.round(Math.abs(s.vol || 0) / maxVol * 100);
+        var dirCls = s.dir === "out" ? "down" : "up";
+        var val = (s.dir === "out" ? "净流出 " : "净流入 ") + (s.vol != null ? s.vol + " 亿" : "") + (s.change ? " · " + s.change : "");
+        return '<div class="sf-row"><div class="sf-name">' + esc(s.name) + "</div>" +
+          '<div class="sf-bar"><span class="sf-fill ' + dirCls + '" style="width:' + w + '%"></span></div>' +
+          '<div class="sf-val ' + dirCls + '">' + esc(val) + (s.note ? ' <span class="sf-note">' + esc(s.note) + "</span>" : "") + "</div></div>";
+      }).join("") + "</div></div>" : "";
 
-    var bm = '<div class="card card-pad"><div class="sub-h">关键利率锚点</div><div class="bm-grid">' +
-      e.benchmarks.map(function (b) {
-        return '<div class="bm"><div class="bm-name">' + esc(b.name) + "</div>" +
-          '<div class="bm-val">' + esc(b.value) + "</div>" +
-          '<div class="bm-note">' + esc(b.note) + "</div></div>";
-      }).join("") + "</div></div>";
+    var watch = (e.watch && e.watch.length) ? '<div class="card card-pad"><div class="sub-h">值得留意的信号</div><ul class="fin-watch">' +
+      e.watch.map(function (w) { return "<li>" + esc(w) + "</li>"; }).join("") + "</ul></div>" : "";
 
-    var items = '<div class="card card-pad">' +
-      e.items.map(function (n) {
-        return '<div class="fin-item"><div class="fin-head"><span class="tag t-green">' + esc(n.tag) + "</span>" +
-          '<div class="fin-title">' + esc(n.title) + "</div>" +
-          '<span class="fin-toggle"></span></div>' +
-          '<div class="fin-extra"><div class="fin-digest">' + esc(n.digest) + "</div>" +
-          '<div class="fin-take">' + esc(n.takeaway) + "</div></div></div>";
-      }).join("") +
-      '<div class="risk-note">' + esc(e.risk) + "</div></div>";
-
-    box.innerHTML = lesson +
-      '<div class="grid2" style="margin-top:14px">' + rates + bm + "</div>" +
-      '<div style="margin-top:14px">' + items + "</div>";
+    box.innerHTML =
+      '<div class="fin-summary">' + esc(e.summary || "") + "</div>" +
+      mk +
+      '<div style="margin-top:14px">' + sf + "</div>" +
+      '<div style="margin-top:14px">' + watch + "</div>" +
+      (e.risk ? '<div class="risk-note" style="margin-top:14px">' + esc(e.risk) + "</div>" : "");
 
     var nav = $("#financeDates"); nav.innerHTML = "";
     nav.appendChild(datePills(list, e.date, renderFinance));
@@ -613,46 +624,37 @@
     var list = WB.speech || [];
     var e = pickEntry(list, date || TODAY);
     var box = $("#speechBody");
-    if (!e) { box.innerHTML = '<div class="empty">暂无训练内容</div>'; return; }
+    if (!e) { box.innerHTML = '<div class="empty">暂无内容</div>'; return; }
 
-    var imp = '<div class="imp"><span class="tag t-violet">① 即兴口述 · ' + esc(e.impromptu.duration) + "</span>" +
-      '<div class="imp-q">' + esc(e.impromptu.question) + "</div>" +
-      '<ul class="imp-steps">' + e.impromptu.framework.map(function (f) { return "<li>" + esc(f) + "</li>"; }).join("") + "</ul>" +
-      '<div class="imp-tip">' + esc(e.impromptu.tip) + "</div></div>";
+    var art = e.article || {};
+    var body = (art.body || []).map(function (p) { return "<p>" + md(p) + "</p>"; }).join("");
+    var artHTML = '<div class="read-article">' +
+      '<div class="ra-meta">' +
+        (art.title ? '<span class="ra-title">' + esc(art.title) + "</span>" : "") +
+        (art.author ? '<span class="ra-author">' + esc(art.author) + "</span>" : "") +
+        (art.source ? '<span class="ra-src">来源：' + esc(art.source) + "</span>" : "") +
+      "</div>" +
+      '<div class="ra-body">' + body + "</div>" +
+      (art.why ? '<div class="ra-why"><b>为什么读这篇：</b>' + esc(art.why) + "</div>" : "") +
+      "</div>";
 
-    var tpls = '<div class="card card-pad"><div class="sub-h">② 结构化话术模板</div>' +
-      e.templates.map(function (t) {
-        return '<div class="tpl"><div class="tpl-head"><h4 class="tpl-scene">' + esc(t.scene) + "</h4>" +
-          '<span class="tpl-struct">' + esc(t.structure) + "</span></div>" +
-          t.script.map(function (s) {
-            return '<div class="step"><div class="step-name">' + esc(s.step) + "</div>" +
-              '<div class="step-say">' + esc(s.say) + "</div>" +
-              '<div class="step-why">' + esc(s.why) + "</div></div>";
-          }).join("") + "</div>";
-      }).join('<hr style="border:0;border-top:1px solid var(--border);margin:18px 0">') + "</div>";
+    var refl = (e.reflection && e.reflection.length) ? '<div class="card card-pad"><div class="sub-h">今日思维练习</div><ul class="refl">' +
+      e.reflection.map(function (r) { return "<li>" + esc(r) + "</li>"; }).join("") + "</ul></div>" : "";
 
-    var ana = '<div class="card card-pad"><div class="sub-h">③ 逻辑表达拆解范例</div>' +
-      e.analysis.map(function (a) {
-        return '<div class="ana">' +
-          '<div class="ana-bad"><div class="ana-lbl">✗ 原句</div>' +
-            '<div class="ana-txt">' + esc(a.bad) + "</div>" +
-            '<ul class="ana-probs">' + a.problems.map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("") + "</ul></div>" +
-          '<div class="ana-good"><div class="ana-lbl">✓ 改写</div>' +
-            '<div class="ana-txt">' + esc(a.good) + "</div></div>" +
-          '<div class="ana-foot"><b>方法：</b>' + esc(a.rule) + "<br><b>底层原则：</b>" + esc(a.principle) + "</div>" +
-        "</div>";
-      }).join("") + "</div>";
+    var quotes = (e.quotes && e.quotes.length) ? '<div class="card card-pad"><div class="sub-h">可积累的金句</div>' +
+      e.quotes.map(function (q) { return '<div class="quote">“' + esc(q) + '”</div>'; }).join("") + "</div>" : "";
 
-    box.innerHTML = '<div style="margin-bottom:6px"><span class="tag t-gray">今日主题 · ' + esc(e.theme) + "</span></div>" +
-      imp + '<div style="margin-top:14px">' + tpls + "</div>" +
-      '<div style="margin-top:14px">' + ana + "</div>";
+    box.innerHTML = '<div style="margin-bottom:6px"><span class="tag t-violet">今日主题 · ' + esc(e.theme || "") + "</span></div>" +
+      artHTML +
+      '<div style="margin-top:14px">' + refl + "</div>" +
+      '<div style="margin-top:14px">' + quotes + "</div>";
 
     var nav = $("#speechDates"); nav.innerHTML = "";
     nav.appendChild(datePills(list, e.date, renderSpeech));
   }
 
   /* ============ 导航 · 单视图切换 ============ */
-  var VIEWS = ["overview", "english", "fire", "news", "finance", "ledger", "speech"];
+  var VIEWS = ["overview", "fire", "news", "finance", "ledger", "speech"];
   function setView(key) {
     VIEWS.forEach(function (v) {
       var el = document.getElementById(v);
@@ -662,6 +664,24 @@
     if (foot) foot.classList.toggle("view-active", key === "overview");
     $$(".side-nav a").forEach(function (a) {
       a.classList.toggle("on", a.getAttribute("href") === "#" + key);
+    });
+  }
+  function initTheme() {
+    var KEY = "wb_theme";
+    function apply(t) {
+      document.body.classList.remove("theme-light", "theme-dark");
+      document.body.classList.add("theme-" + t);
+      $$(".ts-btn").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-theme") === t); });
+    }
+    var saved = "light";
+    try { saved = localStorage.getItem(KEY) || "light"; } catch (e) {}
+    apply(saved);
+    $$(".ts-btn").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var t = b.getAttribute("data-theme");
+        apply(t);
+        try { localStorage.setItem(KEY, t); } catch (e) {}
+      });
     });
   }
   function initNav() {
@@ -682,9 +702,9 @@
     $("#agentSign").textContent = META.agent ? ("by " + META.agent) : "";
     var ag2 = $("#agentSign2"); if (ag2) ag2.textContent = META.agent ? ("by " + META.agent) : "";
 
+    initTheme();         // 浅紫模板 + 白/黑底切换（须在渲染前）
     initFire();          // 需先算出在招数量供总览使用
     renderOverview();
-    renderEnglish(TODAY);
     renderNews(TODAY);
     renderFinance(TODAY);
     initLedger();
@@ -692,11 +712,8 @@
     initNav();
     setView("overview");   // 默认只显示总览，点左侧导航切换单模块
 
-    // 全局点击：朗读按钮 / 跟读模式 / 资讯手风琴展开
+    // 全局点击：资讯手风琴展开
     document.addEventListener("click", function (e) {
-      var spk = e.target.closest && e.target.closest(".spk");
-      if (spk) { e.preventDefault(); speak(decodeURIComponent(spk.getAttribute("data-en")), spk); return; }
-      if (e.target.id === "enShadow") { shadowRead(); return; }
       var item = e.target.closest && e.target.closest(".news-item, .fin-item");
       if (item) {
         if (e.target.closest("a")) return;   // 点原文链接不折叠
