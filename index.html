@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workboard 个人成长工作台</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">
+      <span class="brand-mark">Work<em>board</em></span>
+      <span class="brand-sub">个人成长工作台</span>
+    </div>
+    <nav class="nav">
+      <a href="#overview">总览</a>
+      <a href="#english">每日英语</a>
+      <a href="#fire">消防招聘</a>
+      <a href="#news">热点资讯</a>
+      <a href="#finance">财经资讯</a>
+      <a href="#ledger">记账本</a>
+      <a href="#speech">口才训练</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ 0 总览 ============ -->
+  <section id="overview" class="hero">
+    <div class="hero-top">
+      <div class="hero-greet">
+        <h1 class="hero-hello" id="heroHello">今日工作台</h1>
+        <div class="hero-date" id="heroDate"></div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num accent" id="statLive">0</div>
+          <div class="stat-lbl">在招岗位</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statDone">0/5</div>
+          <div class="stat-lbl">今日完成</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statStreak">0</div>
+          <div class="stat-lbl">连续打卡</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkrow" id="checkRow"></div>
+
+    <div class="review">
+      <label for="reviewNote">今日一句话复盘 —— 今天学到 / 用上了什么？</label>
+      <textarea id="reviewNote" placeholder="例：今天用「meet you partway」谈成了一个折中价；口才训练学到反对要带替代方案。"></textarea>
+      <div class="review-foot"><span class="saved" id="savedFlag">已自动保存</span></div>
+    </div>
+
+    <div class="streak-strip" id="streakStrip"></div>
+  </section>
+
+  <!-- ============ 1 每日英语 ============ -->
+  <section id="english" class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx">Module 01</div>
+        <h2 class="sec-title">每日英语</h2>
+      </div>
+      <div class="sec-desc">日常商务口语场景 + 高频短句，自动保留最近 7 天素材，随时回看复习。</div>
+    </div>
+    <div id="englishDates" style="margin-bottom:14px"></div>
+    <div id="englishBody"></div>
+  </section>
+
+  <!-- ============ 2 消防招聘 ============ -->
+  <section id="fire" class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx">Module 02 · 核心业务</div>
+        <h2 class="sec-title">消防招聘信息采集</h2>
+      </div>
+      <div class="sec-desc">全国各区县消防官方公众号 / 政务平台专职消防员招录公告，自动去重、过滤过期，按省份分组归档。</div>
+    </div>
+
+    <div class="filters">
+      <select id="fireProv"><option value="">全部省份</option></select>
+      <input id="fireSearch" type="search" placeholder="搜索区县 / 岗位 / 资质关键词…">
+      <span class="f-count" id="fireCount"></span>
+    </div>
+
+    <div style="font-size:12.5px;color:var(--muted);margin:-6px 0 14px" id="fireNote"></div>
+
+    <div id="fireLive"></div>
+
+    <details class="archive-box">
+      <summary>历史归档 · 已截止公告（<span id="fireArchiveCount">0</span> 条）</summary>
+      <div class="archive-body" id="fireArchive"></div>
+    </details>
+  </section>
+
+  <!-- ============ 3 热点资讯 ============ -->
+  <section id="news" class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx">Module 03</div>
+        <h2 class="sec-title">每日热点资讯</h2>
+      </div>
+      <div class="sec-desc">数据源限定权威官媒，已屏蔽娱乐八卦。每条附「谈资角度」，可直接用于社交场合。</div>
+    </div>
+    <div id="newsDates" style="margin-bottom:14px"></div>
+    <div id="newsBody"></div>
+  </section>
+
+  <!-- ============ 4 财经资讯 ============ -->
+  <section id="finance" class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx">Module 04</div>
+        <h2 class="sec-title">财经资讯</h2>
+      </div>
+      <div class="sec-desc">轻量化理财科普 + 存款利率 + 宏观简讯。不推荐任何具体产品，只建认知。</div>
+    </div>
+    <div id="financeDates" style="margin-bottom:14px"></div>
+    <div id="financeBody"></div>
+  </section>
+
+  <!-- ============ 5 记账本 · 个人收支 ============ -->
+  <section id="ledger" class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx">Module 05</div>
+        <h2 class="sec-title">记账本 · 个人收支</h2>
+      </div>
+      <div class="sec-desc">随手记收支，自动按月汇总、按分类统计占比。数据仅存本机浏览器，不上传。</div>
+    </div>
+
+    <div class="ledger-summary" id="ledgerSummary"></div>
+
+    <div class="card card-pad ledger-form">
+      <div class="sub-h">记一笔
+        <span class="ledger-tools">
+          <button class="btn" id="ledgerExport" type="button">导出备份</button>
+          <button class="btn" id="ledgerImport" type="button">导入备份</button>
+        </span>
+      </div>
+      <input type="file" id="ledgerImportFile" accept="application/json" hidden>
+      <form id="ledgerF" class="ledger-f" autocomplete="off">
+        <div class="ledger-types" id="ledgerTypes">
+          <label class="on"><input type="radio" name="lt" value="out" checked> 支出</label>
+          <label><input type="radio" name="lt" value="in"> 收入</label>
+        </div>
+        <input type="date" id="lfDate" class="lf-date">
+        <select id="lfCat" class="lf-cat"></select>
+        <input type="number" id="lfAmt" class="lf-amt" step="0.01" min="0" placeholder="金额">
+        <input type="text" id="lfNote" class="lf-note" placeholder="备注（可选）" maxlength="40">
+        <button class="btn primary" type="submit">添加</button>
+      </form>
+    </div>
+
+    <div class="ledger-monthbar">
+      <button class="btn" id="ledgerPrev" type="button">‹</button>
+      <span class="ledger-month" id="ledgerMonth"></span>
+      <button class="btn" id="ledgerNext" type="button">›</button>
+      <span class="ledger-hint">数据保存在本机浏览器，换设备不互通</span>
+    </div>
+
+    <div id="ledgerList"></div>
+
+    <div class="card card-pad ledger-cats" id="ledgerCats" style="margin-top:16px"></div>
+  </section>
+
+  <!-- ============ 6 口才逻辑训练 ============ -->
+  <section id="speech" class="section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-idx">Module 05</div>
+        <h2 class="sec-title">口才逻辑训练</h2>
+      </div>
+      <div class="sec-desc">即兴口述 + 结构化话术模板 + 逻辑拆解范例，素材全部贴合消防培训行业场景。</div>
+    </div>
+    <div id="speechDates" style="margin-bottom:14px"></div>
+    <div id="speechBody"></div>
+  </section>
+
+  <footer class="foot">
+    <span id="footMeta"></span>
+    <span class="dot">·</span>
+    <span>打卡、复盘与记账数据均保存在本机浏览器</span>
+    <span class="dot">·</span>
+    <span id="agentSign"></span>
+  </footer>
+
+</main>
+
+<script src="data/meta.js"></script>
+<script src="data/english.js"></script>
+<script src="data/fire-jobs.js"></script>
+<script src="data/news.js"></script>
+<script src="data/finance.js"></script>
+<script src="data/ledger.js"></script>
+<script src="data/speech.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
