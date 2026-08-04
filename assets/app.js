@@ -643,17 +643,27 @@
     nav.appendChild(datePills(list, e.date, renderSpeech));
   }
 
-  /* ============ 导航高亮 ============ */
+  /* ============ 导航 · 单视图切换 ============ */
+  var VIEWS = ["overview", "english", "fire", "news", "finance", "ledger", "speech"];
+  function setView(key) {
+    VIEWS.forEach(function (v) {
+      var el = document.getElementById(v);
+      if (el) el.classList.toggle("view-active", v === key);
+    });
+    var foot = document.querySelector(".foot");
+    if (foot) foot.classList.toggle("view-active", key === "overview");
+    $$(".side-nav a").forEach(function (a) {
+      a.classList.toggle("on", a.getAttribute("href") === "#" + key);
+    });
+  }
   function initNav() {
-    var links = $$(".side-nav a");
-    var secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
-    function onScroll() {
-      var y = window.scrollY + 20, idx = 0;
-      secs.forEach(function (s, i) { if (s && s.offsetTop <= y) idx = i; });
-      links.forEach(function (a, i) { a.classList.toggle("on", i === idx); });
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    $$(".side-nav a").forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        setView(a.getAttribute("href").slice(1));
+        try { window.scrollTo(0, 0); } catch (e2) {}
+      });
+    });
   }
 
   /* ============ 启动 ============ */
@@ -672,6 +682,7 @@
     initLedger();
     renderSpeech(TODAY);
     initNav();
+    setView("overview");   // 默认只显示总览，点左侧导航切换单模块
 
     // 全局点击：朗读按钮 / 跟读模式 / 资讯手风琴展开
     document.addEventListener("click", function (e) {
