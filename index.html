@@ -8,14 +8,14 @@
 </head>
 <body>
 
-<header class="topbar">
-  <div class="wrap topbar-inner">
-    <div class="brand">
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-brand">
       <span class="brand-mark">Work<em>board</em></span>
       <span class="brand-sub">个人成长工作台</span>
     </div>
-    <nav class="nav">
-      <a href="#overview">总览</a>
+    <nav class="side-nav">
+      <a href="#overview" class="active">总览</a>
       <a href="#english">每日英语</a>
       <a href="#fire">消防招聘</a>
       <a href="#news">热点资讯</a>
@@ -23,10 +23,11 @@
       <a href="#ledger">记账本</a>
       <a href="#speech">口才训练</a>
     </nav>
-  </div>
-</header>
+    <div class="side-foot"><span id="agentSign2"></span></div>
+  </aside>
 
-<main class="wrap">
+  <div class="main-col">
+  <main class="wrap">
 
   <!-- ============ 0 总览 ============ -->
   <section id="overview" class="hero">
@@ -194,6 +195,8 @@
   </footer>
 
 </main>
+  </div><!-- /main-col -->
+</div><!-- /layout -->
 
 <script src="data/meta.js"></script>
 <script src="data/english.js"></script>
