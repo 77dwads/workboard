@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Workboard 个人成长工作台</title>
-<link rel="stylesheet" href="assets/style.20260804-1218.css">
+<link rel="stylesheet" href="assets/style.20260804-1245.css">
 </head>
 <body>
 
@@ -16,14 +16,22 @@
     </div>
     <nav class="side-nav">
       <a href="#overview" class="active">总览</a>
-      <a href="#english">每日英语</a>
       <a href="#fire">消防招聘</a>
       <a href="#news">热点资讯</a>
-      <a href="#finance">财经资讯</a>
+      <a href="#finance">财经 · 资金流向</a>
       <a href="#ledger">记账本</a>
-      <a href="#speech">口才训练</a>
+      <a href="#speech">口才 · 思维阅读</a>
     </nav>
-    <div class="side-foot"><span id="agentSign2"></span></div>
+    <div class="side-foot">
+      <div class="theme-switch">
+        <span class="ts-lbl">底色</span>
+        <div class="ts-btns">
+          <button type="button" class="ts-btn" data-theme="light">白</button>
+          <button type="button" class="ts-btn" data-theme="dark">黑</button>
+        </div>
+      </div>
+      <span id="agentSign2"></span>
+    </div>
   </aside>
 
   <div class="main-col">
@@ -63,24 +71,11 @@
     <div class="streak-strip" id="streakStrip"></div>
   </section>
 
-  <!-- ============ 1 每日英语 ============ -->
-  <section id="english" class="section">
-    <div class="sec-head">
-      <div>
-        <div class="sec-idx">Module 01</div>
-        <h2 class="sec-title">每日英语</h2>
-      </div>
-      <div class="sec-desc">日常商务口语场景 + 高频短句，自动保留最近 7 天素材，随时回看复习。</div>
-    </div>
-    <div id="englishDates" style="margin-bottom:14px"></div>
-    <div id="englishBody"></div>
-  </section>
-
-  <!-- ============ 2 消防招聘 ============ -->
+  <!-- ============ 1 消防招聘 ============ -->
   <section id="fire" class="section">
     <div class="sec-head">
       <div>
-        <div class="sec-idx">Module 02 · 核心业务</div>
+        <div class="sec-idx">Module 01 · 核心业务</div>
         <h2 class="sec-title">消防招聘信息采集</h2>
       </div>
       <div class="sec-desc">全国各区县消防官方公众号 / 政务平台专职消防员招录公告，自动去重、过滤过期，按省份分组归档。</div>
@@ -102,37 +97,37 @@
     </details>
   </section>
 
-  <!-- ============ 3 热点资讯 ============ -->
+  <!-- ============ 2 热点资讯 ============ -->
   <section id="news" class="section">
     <div class="sec-head">
       <div>
-        <div class="sec-idx">Module 03</div>
+        <div class="sec-idx">Module 02</div>
         <h2 class="sec-title">每日热点资讯</h2>
       </div>
-      <div class="sec-desc">数据源限定权威官媒，已屏蔽娱乐八卦。每条附「谈资角度」，可直接用于社交场合。</div>
+      <div class="sec-desc">数据源限定权威官媒，已屏蔽娱乐八卦。点标题展开可直接读原文节选，附「谈资角度」与一键看原文。</div>
     </div>
     <div id="newsDates" style="margin-bottom:14px"></div>
     <div id="newsBody"></div>
   </section>
 
-  <!-- ============ 4 财经资讯 ============ -->
+  <!-- ============ 3 财经 · 资金流向 ============ -->
   <section id="finance" class="section">
     <div class="sec-head">
       <div>
-        <div class="sec-idx">Module 04</div>
-        <h2 class="sec-title">财经资讯</h2>
+        <div class="sec-idx">Module 03</div>
+        <h2 class="sec-title">财经 · 资金流向</h2>
       </div>
-      <div class="sec-desc">轻量化理财科普 + 存款利率 + 宏观简讯。不推荐任何具体产品，只建认知。</div>
+      <div class="sec-desc">每日梳理 A 股主力资金、板块净流入与资金偏向，一眼看明白钱在往哪些方向走。客观数据，不构成投资建议。</div>
     </div>
     <div id="financeDates" style="margin-bottom:14px"></div>
     <div id="financeBody"></div>
   </section>
 
-  <!-- ============ 5 记账本 · 个人收支 ============ -->
+  <!-- ============ 4 记账本 · 个人收支 ============ -->
   <section id="ledger" class="section">
     <div class="sec-head">
       <div>
-        <div class="sec-idx">Module 05</div>
+        <div class="sec-idx">Module 04</div>
         <h2 class="sec-title">记账本 · 个人收支</h2>
       </div>
       <div class="sec-desc">随手记收支，自动按月汇总、按分类统计占比。数据仅存本机浏览器，不上传。</div>
@@ -173,14 +168,14 @@
     <div class="card card-pad ledger-cats" id="ledgerCats" style="margin-top:16px"></div>
   </section>
 
-  <!-- ============ 6 口才逻辑训练 ============ -->
+  <!-- ============ 5 口才 · 思维阅读 ============ -->
   <section id="speech" class="section">
     <div class="sec-head">
       <div>
         <div class="sec-idx">Module 05</div>
-        <h2 class="sec-title">口才逻辑训练</h2>
+        <h2 class="sec-title">口才 · 思维阅读</h2>
       </div>
-      <div class="sec-desc">即兴口述 + 结构化话术模板 + 逻辑拆解范例，素材全部贴合消防培训行业场景。</div>
+      <div class="sec-desc">每日一篇锻炼思维与口才的好文章 + 思考练习 + 可积累的金句，慢慢让自己说话更有料、更有文化。</div>
     </div>
     <div id="speechDates" style="margin-bottom:14px"></div>
     <div id="speechBody"></div>
@@ -198,13 +193,12 @@
   </div><!-- /main-col -->
 </div><!-- /layout -->
 
-<script src="data/meta.20260804-1218.js"></script>
-<script src="data/english.20260804-1218.js"></script>
-<script src="data/fire-jobs.20260804-1218.js"></script>
-<script src="data/news.20260804-1218.js"></script>
-<script src="data/finance.20260804-1218.js"></script>
-<script src="data/ledger.20260804-1218.js"></script>
-<script src="data/speech.20260804-1218.js"></script>
-<script src="assets/app.20260804-1218.js"></script>
+<script src="data/meta.20260804-1245.js"></script>
+<script src="data/fire-jobs.20260804-1245.js"></script>
+<script src="data/news.20260804-1245.js"></script>
+<script src="data/finance.20260804-1245.js"></script>
+<script src="data/ledger.20260804-1245.js"></script>
+<script src="data/speech.20260804-1245.js"></script>
+<script src="assets/app.20260804-1245.js"></script>
 </body>
 </html>
