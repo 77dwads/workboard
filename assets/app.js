@@ -38,6 +38,34 @@
   }
   function shortDate(str) { var p = str.split("-"); return (+p[1]) + "/" + (+p[2]); }
 
+  /* 朗读 / 跟读（浏览器内置 Web Speech API） */
+  var synth = window.speechSynthesis || null;
+  function enc(s) { return encodeURIComponent(String(s == null ? "" : s)); }
+  function speak(text, btn) {
+    if (!synth) return;
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US"; u.rate = 0.92; u.pitch = 1;
+    if (btn) {
+      u.onstart = function () { btn.classList.add("speaking"); };
+      u.onend = u.onerror = function () { btn.classList.remove("speaking"); };
+    }
+    synth.speak(u);
+  }
+  function shadowRead() {
+    if (!synth) { alert("当前浏览器不支持语音朗读"); return; }
+    var btns = $$("#englishBody .dlg-line .spk");
+    if (!btns.length) return;
+    synth.cancel();
+    btns.forEach(function (b) {
+      var u = new SpeechSynthesisUtterance(decodeURIComponent(b.getAttribute("data-en")));
+      u.lang = "en-US"; u.rate = 0.88;
+      u.onstart = function () { btns.forEach(function (x) { x.classList.remove("speaking"); }); b.classList.add("speaking"); };
+      u.onend = function () { b.classList.remove("speaking"); };
+      synth.speak(u);
+    });
+  }
+
   var TODAY = iso(new Date());
 
   /* 从按日期倒序的数组里取某天，取不到则取最新的一天 */
@@ -156,6 +184,8 @@
     if (!e) { box.innerHTML = '<div class="empty">暂无素材</div>'; return; }
 
     box.innerHTML =
+      '<div class="en-tools"><button class="btn" id="enShadow" type="button">▶ 跟读模式 · 逐句朗读</button>' +
+      '<span class="en-tools-hint">点 🔊 单句跟读，或一键逐句播放并高亮</span></div>' +
       '<div class="grid2">' +
         '<div class="card card-pad">' +
           '<h3 class="en-scene">' + esc(e.scene) + "</h3>" +
@@ -165,8 +195,9 @@
             e.dialogue.map(function (l) {
               return '<div class="dlg-line' + (/you/i.test(l.role) ? " you" : "") + '">' +
                 '<div class="dlg-role">' + esc(l.role) + "</div>" +
-                '<div class="dlg-body"><div class="dlg-en">' + esc(l.en) + "</div>" +
-                '<div class="dlg-zh">' + esc(l.zh) + "</div></div></div>";
+                '<div class="dlg-body"><div class="dlg-txt"><div class="dlg-en">' + esc(l.en) + "</div>" +
+                '<div class="dlg-zh">' + esc(l.zh) + "</div></div>" +
+                '<button class="spk" type="button" data-en="' + enc(l.en) + '" title="朗读">🔊</button></div></div>';
             }).join("") +
           "</div>" +
         "</div>" +
@@ -174,7 +205,8 @@
           '<div class="card card-pad" style="margin-bottom:14px">' +
             '<div class="sub-h">高频短句 · 背下来直接能用</div>' +
             '<ul class="phr">' + e.phrases.map(function (p) {
-              return "<li><div class=\"p-en\">" + esc(p.en) + "</div><div class=\"p-zh\">" + esc(p.zh) + "</div></li>";
+              return "<li><button class=\"spk\" type=\"button\" data-en=\"" + enc(p.en) + "\" title=\"朗读\">🔊</button>" +
+                "<div class=\"p-txt\"><div class=\"p-en\">" + esc(p.en) + "</div><div class=\"p-zh\">" + esc(p.zh) + "</div></div></li>";
             }).join("") + "</ul>" +
           "</div>" +
           '<div class="card card-pad">' +
@@ -305,13 +337,15 @@
     box.innerHTML = '<div class="card card-pad"><div class="news-list">' +
       e.items.map(function (n) {
         return '<div class="news-item">' +
-          '<span class="tag t-blue">' + esc(n.tag) + "</span>" +
+          '<div class="news-head"><span class="tag t-blue">' + esc(n.tag) + "</span>" +
           '<div class="news-title">' + esc(n.title) + "</div>" +
+          '<span class="news-toggle"></span></div>' +
+          '<div class="news-extra">' +
           '<div class="news-digest">' + esc(n.digest) + "</div>" +
           '<div class="news-angle">' + esc(n.angle) + "</div>" +
           '<div class="news-src">来源：' + esc(n.source) +
-            (n.url ? ' · <a href="' + esc(n.url) + '" target="_blank" rel="noopener">原文</a>' : "") +
-          "</div></div>";
+            (n.url ? ' · <a href="' + esc(n.url) + '" target="_blank" rel="noopener">查看原文 ↗</a>' : "") +
+          "</div></div></div>";
       }).join("") + "</div></div>";
 
     var nav = $("#newsDates"); nav.innerHTML = "";
@@ -344,10 +378,11 @@
 
     var items = '<div class="card card-pad">' +
       e.items.map(function (n) {
-        return '<div class="fin-item"><span class="tag t-green">' + esc(n.tag) + "</span>" +
+        return '<div class="fin-item"><div class="fin-head"><span class="tag t-green">' + esc(n.tag) + "</span>" +
           '<div class="fin-title">' + esc(n.title) + "</div>" +
-          '<div class="fin-digest">' + esc(n.digest) + "</div>" +
-          '<div class="fin-take">' + esc(n.takeaway) + "</div></div>";
+          '<span class="fin-toggle"></span></div>' +
+          '<div class="fin-extra"><div class="fin-digest">' + esc(n.digest) + "</div>" +
+          '<div class="fin-take">' + esc(n.takeaway) + "</div></div></div>";
       }).join("") +
       '<div class="risk-note">' + esc(e.risk) + "</div></div>";
 
@@ -580,10 +615,10 @@
 
   /* ============ 导航高亮 ============ */
   function initNav() {
-    var links = $$(".nav a");
+    var links = $$(".side-nav a");
     var secs = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
     function onScroll() {
-      var y = window.scrollY + 120, idx = 0;
+      var y = window.scrollY + 20, idx = 0;
       secs.forEach(function (s, i) { if (s && s.offsetTop <= y) idx = i; });
       links.forEach(function (a, i) { a.classList.toggle("on", i === idx); });
     }
@@ -597,6 +632,7 @@
     $("#footMeta").textContent =
       "数据更新：" + (META.lastUpdate || "—") + " ｜ 消防抓取范围：" + (META.fireScope || "—");
     $("#agentSign").textContent = META.agent ? ("by " + META.agent) : "";
+    var ag2 = $("#agentSign2"); if (ag2) ag2.textContent = META.agent ? ("by " + META.agent) : "";
 
     initFire();          // 需先算出在招数量供总览使用
     renderOverview();
@@ -606,6 +642,18 @@
     initLedger();
     renderSpeech(TODAY);
     initNav();
+
+    // 全局点击：朗读按钮 / 跟读模式 / 资讯手风琴展开
+    document.addEventListener("click", function (e) {
+      var spk = e.target.closest && e.target.closest(".spk");
+      if (spk) { e.preventDefault(); speak(decodeURIComponent(spk.getAttribute("data-en")), spk); return; }
+      if (e.target.id === "enShadow") { shadowRead(); return; }
+      var item = e.target.closest && e.target.closest(".news-item, .fin-item");
+      if (item) {
+        if (e.target.closest("a")) return;   // 点原文链接不折叠
+        item.classList.toggle("open");
+      }
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
