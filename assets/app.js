@@ -40,12 +40,15 @@
 
   /* 朗读 / 跟读（浏览器内置 Web Speech API） */
   var synth = window.speechSynthesis || null;
+  var EN_RATE = 0.8;      // 跟读速度，默认 0.8× 慢速，方便跟读
+  var EN_SHOW_ZH = true;  // 是否显示中文翻译
+  function getRate() { var el = $("#enRate"); return el ? (parseFloat(el.value) || 0.8) : EN_RATE; }
   function enc(s) { return encodeURIComponent(String(s == null ? "" : s)); }
   function speak(text, btn) {
     if (!synth) return;
     synth.cancel();
     var u = new SpeechSynthesisUtterance(text);
-    u.lang = "en-US"; u.rate = 0.92; u.pitch = 1;
+    u.lang = "en-US"; u.rate = getRate(); u.pitch = 1;
     if (btn) {
       u.onstart = function () { btn.classList.add("speaking"); };
       u.onend = u.onerror = function () { btn.classList.remove("speaking"); };
@@ -57,9 +60,10 @@
     var btns = $$("#englishBody .dlg-line .spk");
     if (!btns.length) return;
     synth.cancel();
+    var rate = getRate();
     btns.forEach(function (b) {
       var u = new SpeechSynthesisUtterance(decodeURIComponent(b.getAttribute("data-en")));
-      u.lang = "en-US"; u.rate = 0.88;
+      u.lang = "en-US"; u.rate = rate;
       u.onstart = function () { btns.forEach(function (x) { x.classList.remove("speaking"); }); b.classList.add("speaking"); };
       u.onend = function () { b.classList.remove("speaking"); };
       synth.speak(u);
@@ -184,8 +188,18 @@
     if (!e) { box.innerHTML = '<div class="empty">暂无素材</div>'; return; }
 
     box.innerHTML =
-      '<div class="en-tools"><button class="btn" id="enShadow" type="button">▶ 跟读模式 · 逐句朗读</button>' +
-      '<span class="en-tools-hint">点 🔊 单句跟读，或一键逐句播放并高亮</span></div>' +
+      '<div class="en-tools">' +
+        '<button class="btn" id="enShadow" type="button">▶ 跟读模式 · 逐句朗读</button>' +
+        '<label class="en-opt">朗读速度' +
+          '<select id="enRate" class="en-rate">' +
+            '<option value="0.6">0.6× 慢</option>' +
+            '<option value="0.8" selected>0.8×</option>' +
+            '<option value="1">1.0× 常速</option>' +
+            '<option value="1.2">1.2× 快</option>' +
+          '</select></label>' +
+        '<label class="en-opt en-zh-opt"><input type="checkbox" id="enZh" checked> 显示中文翻译</label>' +
+        '<span class="en-tools-hint">点 🔊 单句跟读，或一键逐句播放并高亮</span>' +
+      '</div>' +
       '<div class="grid2">' +
         '<div class="card card-pad">' +
           '<h3 class="en-scene">' + esc(e.scene) + "</h3>" +
@@ -221,6 +235,22 @@
     var nav = $("#englishDates");
     nav.innerHTML = "";
     nav.appendChild(datePills(list, e.date, renderEnglish));
+
+    // 跟读速度 / 中英对照开关（状态跨日期保留）
+    var rateEl = $("#enRate");
+    if (rateEl) {
+      rateEl.value = String(EN_RATE);
+      rateEl.addEventListener("change", function () { EN_RATE = parseFloat(rateEl.value) || 0.8; });
+    }
+    var zhEl = $("#enZh");
+    if (zhEl) {
+      zhEl.checked = EN_SHOW_ZH;
+      box.classList.toggle("hide-zh", !EN_SHOW_ZH);
+      zhEl.addEventListener("change", function () {
+        EN_SHOW_ZH = zhEl.checked;
+        box.classList.toggle("hide-zh", !EN_SHOW_ZH);
+      });
+    }
   }
 
   /* ============ 2. 消防招聘 ============ */
