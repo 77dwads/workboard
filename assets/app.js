@@ -448,7 +448,8 @@
     return d;
   }
   function saveLedger(o) {
-    try { localStorage.setItem(LEDGER_KEY, JSON.stringify(o)); } catch (e) {}
+    try { localStorage.setItem(LEDGER_KEY, JSON.stringify(o)); return true; }
+    catch (e) { return false; }
   }
   function fmtMoney(n) {
     return "¥" + (Math.round(n * 100) / 100).toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -553,10 +554,17 @@
     $("#ledgerList").addEventListener("click", function (e) {
       var btn = e.target.closest && e.target.closest(".lr-del");
       if (!btn) return;
+      e.preventDefault();
       var id = btn.getAttribute("data-id");
       var data = loadLedger();
-      data.records = data.records.filter(function (r) { return r.id !== id; });
-      saveLedger(data);
+      var before = data.records.length;
+      data.records = data.records.filter(function (r) { return String(r.id) !== String(id); });
+      if (data.records.length === before) return; // 没匹配到，直接忽略
+      if (!saveLedger(data)) {
+        alert("删除未能保存：当前浏览器（多为微信/QQ内置浏览器或无痕模式）禁止了本地存储。\n请改用手机自带 Chrome / Safari 的「正常模式」打开本页面，记账与删除即可长期保存。");
+        renderLedger();
+        return;
+      }
       renderLedger();
     });
 
