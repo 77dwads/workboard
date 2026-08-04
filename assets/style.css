@@ -295,6 +295,12 @@ a:hover { text-decoration: underline; }
   font-size: 13px; color: #6b4c11;
 }
 .news-src { font-size: 12px; color: var(--faint); margin-top: 7px; }
+.news-link {
+  display: inline-block; margin-left: 2px; padding: 2px 10px; border-radius: 999px;
+  background: var(--accent); color: #fff !important; text-decoration: none; font-weight: 600;
+  font-size: 12px; line-height: 1.6; white-space: nowrap;
+}
+.news-link:hover { filter: brightness(1.06); }
 
 /* ---------- Finance ---------- */
 .lesson {
@@ -546,7 +552,10 @@ a:hover { text-decoration: underline; }
   .side-brand .brand-mark { font-size: 15px; }
   .side-nav { flex-direction: column; gap: 4px; }
   .side-nav a { white-space: normal; padding: 10px 8px; font-size: 13px; text-align: left; line-height: 1.25; }
-  .side-foot { display: none; }
+  .side-foot { display: block; margin-top: 14px; }
+  .theme-switch { margin-bottom: 6px; }
+  .theme-switch .ts-lbl { display: none; }
+  .ts-btns { justify-content: center; }
   html { scroll-padding-top: 20px; }
   .dlg-body { flex-wrap: wrap; }
 }
@@ -554,3 +563,109 @@ a:hover { text-decoration: underline; }
   .sidebar { width: 90px; padding: 12px 6px; }
   .side-nav a { font-size: 12px; padding: 9px 6px; }
 }
+
+/* ================= 浅紫主题（白底 / 黑底可切换） ================= */
+body.theme-light {
+  --bg: #f5f2fb;
+  --surface: #ffffff;
+  --surface-2: #faf8fe;
+  --surface-3: #efeaf9;
+  --border: #e7e0f3;
+  --border-strong: #d8ccee;
+  --text: #241a36;
+  --muted: #6a6080;
+  --faint: #9a90ad;
+  --accent: #7c5cff;
+  --accent-soft: #efebff;
+  --accent-line: #ddd2ff;
+  --blue: #4a6fd0; --blue-soft: #ebf0fb;
+  --green: #1f9168; --green-soft: #e6f5ef;
+  --amber: #b0760a; --amber-soft: #fbf2e1;
+  --violet: #7c5cff; --violet-soft: #efebff;
+  --shadow: 0 1px 2px rgba(70,45,130,.05), 0 6px 18px rgba(70,45,130,.07);
+  --shadow-sm: 0 1px 2px rgba(70,45,130,.06);
+}
+body.theme-dark {
+  --bg: #15121f;
+  --surface: #1f1a2e;
+  --surface-2: #241d36;
+  --surface-3: #2a2240;
+  --border: #342b4a;
+  --border-strong: #44385c;
+  --text: #ece9f5;
+  --muted: #aaa0c2;
+  --faint: #7d7395;
+  --accent: #a98bff;
+  --accent-soft: #2a2247;
+  --accent-line: #3a2f5e;
+  --blue: #8aa6e8; --blue-soft: #1f2740;
+  --green: #5fce9f; --green-soft: #16291f;
+  --amber: #e0a23a; --amber-soft: #2c2410;
+  --violet: #a98bff; --violet-soft: #2a2247;
+  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.4);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+}
+.side-nav a.active { background: var(--accent); color: #fff; }
+.side-nav a.active:hover { text-decoration: none; color: #fff; }
+
+/* 侧栏底色切换控件 */
+.theme-switch { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.ts-lbl { font-size: 11.5px; color: var(--faint); }
+.ts-btns { display: flex; gap: 6px; }
+.ts-btn {
+  font-family: inherit; font-size: 12px; cursor: pointer;
+  padding: 4px 11px; border-radius: 7px;
+  border: 1px solid var(--border-strong); background: var(--surface-3); color: var(--muted);
+}
+.ts-btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ---------- 热点资讯：原文节选 ---------- */
+.news-excerpt {
+  font-size: 14px; line-height: 1.7; color: var(--text);
+  background: var(--accent-soft); border-left: 3px solid var(--accent);
+  padding: 9px 12px; border-radius: 8px; margin-bottom: 10px;
+}
+
+/* ---------- 财经 · 资金流向 ---------- */
+.fin-summary {
+  background: var(--accent-soft); border: 1px solid var(--accent-line);
+  border-radius: var(--radius); padding: 13px 16px;
+  font-size: 14.5px; font-weight: 600; color: var(--text); line-height: 1.6;
+}
+.mkt-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.mkt { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; }
+.mkt-lbl { font-size: 12px; color: var(--muted); }
+.mkt-val { font-size: 18px; font-weight: 700; margin-top: 4px; }
+.mkt-val.pos { color: var(--green); }
+.mkt-val.neg { color: #e0533f; }
+body.theme-dark .mkt-val.neg { color: #ff7a63; }
+.sector-flow { margin-top: 10px; }
+.sf-row { display: grid; grid-template-columns: 96px 1fr auto; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px dashed var(--border); }
+.sf-row:last-child { border-bottom: 0; }
+.sf-name { font-size: 13.5px; font-weight: 600; color: var(--text); }
+.sf-bar { height: 9px; background: var(--surface-3); border-radius: 6px; overflow: hidden; }
+.sf-fill { display: block; height: 100%; border-radius: 6px; }
+.sf-fill.up { background: linear-gradient(90deg, #2fb47e, #1f9168); }
+.sf-fill.down { background: linear-gradient(90deg, #ef6a55, #e0533f); }
+.sf-val { font-size: 12.5px; white-space: nowrap; }
+.sf-val.up { color: var(--green); }
+.sf-val.down { color: #e0533f; }
+body.theme-dark .sf-val.down { color: #ff7a63; }
+.sf-note { color: var(--faint); font-size: 11.5px; }
+.fin-watch { margin: 8px 0 0; padding-left: 18px; }
+.fin-watch li { font-size: 13.5px; color: var(--muted); margin: 4px 0; }
+
+/* ---------- 口才 · 思维阅读 ---------- */
+.read-article { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+.ra-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.ra-title { font-size: 17px; font-weight: 700; color: var(--text); }
+.ra-author { font-size: 13px; color: var(--accent); font-weight: 600; }
+.ra-src { font-size: 12px; color: var(--faint); }
+.ra-body p { margin: 0 0 12px; font-size: 15px; line-height: 1.85; color: var(--text); }
+.ra-why { background: var(--accent-soft); border-left: 3px solid var(--accent); padding: 9px 12px; border-radius: 8px; font-size: 13.5px; color: var(--muted); }
+.refl { margin: 8px 0 0; padding-left: 18px; }
+.refl li { font-size: 14px; color: var(--text); margin: 6px 0; }
+.quote { font-size: 14.5px; line-height: 1.7; color: var(--text); padding: 10px 14px; margin: 8px 0; background: var(--surface-2); border-left: 3px solid var(--violet); border-radius: 8px; }
+
+@media (max-width: 900px) { .mkt-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .sf-row { grid-template-columns: 84px 1fr; } .sf-val { grid-column: 2; } }
