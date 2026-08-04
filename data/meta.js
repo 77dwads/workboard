@@ -5,7 +5,7 @@ window.WB.meta = {
   boardName: "Workboard 个人成长工作台",
   owner: "老板",
   agent: "阿墨",
-  lastUpdate: "2026-08-04 12:30",
+  lastUpdate: "2026-08-05 06:55",
   buildDate: "2026-08-04",
   // 消防招聘抓取范围：全国全量，按省份分组
   fireScope: "全国全量（按省份分组）",
