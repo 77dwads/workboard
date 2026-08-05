@@ -9,7 +9,7 @@ window.WB.meta = {
   buildDate: "2026-08-04",
   // 消防招聘抓取范围：全国全量，按省份分组
   fireScope: "全国全量（按省份分组）",
-  theme: "浅紫模板（白底/黑底可切换）",
+  theme: "黑白模板（白底正常 / 黑底护眼可切换）",
   modules: [
     { key: "overview", name: "今日总览 · 打卡复盘", icon: "◎" },
     { key: "fire", name: "消防招聘信息", icon: "▲" },
