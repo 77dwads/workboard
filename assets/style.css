@@ -179,12 +179,9 @@ a:hover { text-decoration: underline; }
   display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 5px;
   font-weight: 600; letter-spacing: .02em;
 }
-.t-red { background: var(--accent-soft); color: var(--accent); }
-.t-blue { background: var(--blue-soft); color: var(--blue); }
-.t-green { background: var(--green-soft); color: var(--green); }
-.t-amber { background: var(--amber-soft); color: var(--amber); }
-.t-violet { background: var(--violet-soft); color: var(--violet); }
-.t-gray { background: var(--surface-3); color: var(--muted); }
+.t-red, .t-blue, .t-green, .t-amber, .t-violet, .t-gray {
+  background: var(--surface-3); color: var(--muted);
+}
 
 /* ---------- English ---------- */
 .en-scene { font-size: 17px; font-weight: 700; margin: 0 0 2px; }
@@ -564,47 +561,38 @@ a:hover { text-decoration: underline; }
   .side-nav a { font-size: 12px; padding: 9px 6px; }
 }
 
-/* ================= 浅紫主题（白底 / 黑底可切换） ================= */
+/* ================= 黑白主题（白底正常 / 黑底护眼可切换） ================= */
+/* 浅紫色已取消：整体走黑白灰，仅财经的涨/跌红绿保留（表示资金方向） */
 body.theme-light {
-  --bg: #f5f2fb;
-  --surface: #ffffff;
-  --surface-2: #faf8fe;
-  --surface-3: #efeaf9;
-  --border: #e7e0f3;
-  --border-strong: #d8ccee;
-  --text: #241a36;
-  --muted: #6a6080;
-  --faint: #9a90ad;
-  --accent: #7c5cff;
-  --accent-soft: #efebff;
-  --accent-line: #ddd2ff;
-  --blue: #4a6fd0; --blue-soft: #ebf0fb;
-  --green: #1f9168; --green-soft: #e6f5ef;
-  --amber: #b0760a; --amber-soft: #fbf2e1;
-  --violet: #7c5cff; --violet-soft: #efebff;
-  --shadow: 0 1px 2px rgba(70,45,130,.05), 0 6px 18px rgba(70,45,130,.07);
-  --shadow-sm: 0 1px 2px rgba(70,45,130,.06);
+  /* 背景/文字沿用 :root 的正常浅色，这里只把强调色改成近黑，去掉紫 */
+  --accent: #1f2430;
+  --accent-soft: #eef0f3;
+  --accent-line: #d9dde3;
+  --violet: #1f2430; --violet-soft: #eef0f3;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 18px rgba(0,0,0,.06);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
 }
 body.theme-dark {
-  --bg: #15121f;
-  --surface: #1f1a2e;
-  --surface-2: #241d36;
-  --surface-3: #2a2240;
-  --border: #342b4a;
-  --border-strong: #44385c;
-  --text: #ece9f5;
-  --muted: #aaa0c2;
-  --faint: #7d7395;
-  --accent: #a98bff;
-  --accent-soft: #2a2247;
-  --accent-line: #3a2f5e;
-  --blue: #8aa6e8; --blue-soft: #1f2740;
-  --green: #5fce9f; --green-soft: #16291f;
-  --amber: #e0a23a; --amber-soft: #2c2410;
-  --violet: #a98bff; --violet-soft: #2a2247;
-  --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.4);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --bg: #17171a;
+  --surface: #222226;
+  --surface-2: #26262b;
+  --surface-3: #2e2e34;
+  --border: #34343a;
+  --border-strong: #41414a;
+  --text: #e6e6e9;
+  --muted: #a3a3ab;
+  --faint: #76767e;
+  --accent: #d2d2d8;
+  --accent-soft: #2c2c32;
+  --accent-line: #3a3a42;
+  --violet: #d2d2d8; --violet-soft: #2c2c32;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.5);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.45);
 }
+/* 护眼模式下的高亮：用浅底深字，保证对比度（白底模式仍用近黑底白字） */
+body.theme-dark .side-nav a.active { background: #e6e6e9; color: #1a1a1a; }
+body.theme-dark .side-nav a.active:hover { color: #1a1a1a; }
+body.theme-dark .ts-btn.on { background: #e6e6e9; color: #1a1a1a; border-color: #e6e6e9; }
 .side-nav a.active { background: var(--accent); color: #fff; }
 .side-nav a.active:hover { text-decoration: none; color: #fff; }
 
